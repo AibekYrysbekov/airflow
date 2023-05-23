@@ -1,54 +1,60 @@
 import requests
-from datetime import datetime, timedelta
-from django.shortcuts import render
-
-from github_pulls.settings import env
+import sqlite3
 
 
-def get_pulls(request):
-    if request.method == 'POST':
-        # Get username, repository name and number of days from form
-        username = request.POST['username']
-        repository = request.POST['repository']
-        days = int(request.POST['days'])
-        data_type = request.POST['data_type']
+# Set up authentication with access token
+with open('token.txt', 'r') as file:
+    access_token = file.read().strip()
 
-        # Set up authentication with access token
-        access_token = env('TOKEN')
-        headers = {'Authorization': f'token {access_token}'}
+headers = {'Authorization': f'token {access_token}'}
 
-        # Set up API endpoint
-        api_endpoint = f'https://api.github.com/repos/{username}/{repository}/{data_type}'
+# Set up API endpoint
+owner = 'apache'
+repo = 'airflow'
+api_endpoint = f'https://api.github.com/repos/{owner}/{repo}/pulls'
 
-        # Calculate the start date based on the specified number of days
-        start_date = datetime.now() - timedelta(days=days)
+# Connect to the SQLite database
+conn = sqlite3.connect('pull_requests.db')
+c = conn.cursor()
 
-        # Retrieve list of pull requests or issues
-        authors_count = dict()
+# Create a table to store pull requests if it doesn't exist
+c.execute('''
+    CREATE TABLE IF NOT EXISTS pull_requests (
+        author TEXT,
+        count INTEGER
+    )
+''')
 
-        for page_number in range(1, 8):
-            response = requests.get(api_endpoint + f"?page={page_number}", headers=headers, params={'state': 'open'})
-            data = response.json()
-            if not data:
-                break
+# Retrieve list of pull requests
+authors_count = dict()
 
-            # Extract list of authors within the specified period
-            authors = [item['user']['login'] for item in data if datetime.strptime(item['created_at'], '%Y-%m-%dT%H:%M:%SZ') >= start_date]
+for page_number in range(1, 8):
+    response = requests.get(api_endpoint + f"?page={page_number}", headers=headers, params={'state': 'open'})
+    pull_requests = response.json()
 
-            for author in authors:
-                if author not in authors_count:
-                    authors_count[author] = 0
-                authors_count[author] += 1
+    if not pull_requests:
+        break
 
-        context = {
-            'username': username,
-            'repository': repository,
-            'authors_count': authors_count,
-            'total_authors': len(authors_count),
-            'total_count': sum(authors_count.values()),
-            'data_type': data_type
-        }
+    # Extract list of pull request authors
+    authors = [pr['user']['login'] for pr in pull_requests]
 
-        return render(request, 'pulls.html', context)
+    for author in authors:
+        if author not in authors_count:
+            authors_count[author] = 0
+        authors_count[author] += 1
 
-    return render(request, 'index.html')
+# Insert pull request data into the database
+for author, count in authors_count.items():
+    c.execute('INSERT INTO pull_requests VALUES (?, ?)', (author, count))
+
+c.execute('SELECT author, count FROM pull_requests')
+results = c.fetchall()
+
+for row in results:
+    author, count = row
+    print(f'Author: {author}, PRs: {count}')
+# Commit the changes and close the database connection
+conn.commit()
+conn.close()
+
+print(f'Pull request data saved to the database.')
