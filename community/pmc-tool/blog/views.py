@@ -9,9 +9,9 @@ with open('token.txt', 'r') as file:
 headers = {'Authorization': f'token {access_token}'}
 
 # Set up API endpoint
-owner = 'apache'
-repo = 'airflow'
-api_endpoint = f'https://api.github.com/repos/{owner}/{repo}/pulls'
+OWNER = 'apache'
+REPO = 'airflow'
+API_ENDPOINT = f'https://api.github.com/repos/{owner}/{repo}/pulls'
 
 # Connect to the SQLite database
 conn = sqlite3.connect('pull_requests.db')
