@@ -1,4 +1,11 @@
-Saving Pull Request Data to SQLite Database
+# Community health monitor for the PMC
+
+This is a project developed as part of Google Summer of Code 2023. See the [proposal document](link to the proposal). The project started being developed by @AibekYrysbekov , with mentorship from @aijamalnk and @pabloem.
+
+The objective is to develop a tool that can be used to analyze information about an open source community. It queries information from the GitHub API and generates reports on the latest state of the community.
+
+
+## Saving Pull Request Data to SQLite Database
 
 This code is designed to fetch a list of pull requests from a specified GitHub repository and save the obtained data to a SQLite database. It also demonstrates an example of utilizing the saved data by printing it to the console.
 
