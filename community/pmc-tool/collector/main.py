@@ -38,8 +38,8 @@
 
 """This file contains logic for interfacing with github and fetching PR and issue data."""
 
-import requests
 from db import create_db_connection, create_pull_requests_table, insert_prs_to_db, fetch_pull_requests
+from gh import query_prs
 
 # Set up authentication with access token
 with open('token.txt', 'r') as file:
@@ -59,25 +59,18 @@ conn = create_db_connection('pull_requests.db')
 create_pull_requests_table(conn)
 
 # Retrieve list of pull requests
+pull_requests = query_prs(API_ENDPOINT, headers)
+
+# Extract list of pull request authors
 authors_count = {}
 
+for pr in pull_requests:
+    author = pr['user']['login']
+    if author not in authors_count:
+        authors_count[author] = 0
+    authors_count[author] += 1
 
-for page_number in range(1, 8):
-    response = requests.get(API_ENDPOINT + f"?page={page_number}", headers=headers, params={'state': 'open'})
-    pull_requests = response.json()
-
-    if not pull_requests:
-        break
-
-    # Extract list of pull request authors
-    authors = [pr['user']['login'] for pr in pull_requests]
-
-    for author in authors:
-        if author not in authors_count:
-            authors_count[author] = 0
-        authors_count[author] += 1
 # Insert pull request data into the database
-# insert_prs_to_db(conn, prs=authors_count)
 insert_prs_to_db(conn, prs=[{'author': author, 'count': count} for author, count in authors_count.items()])
 
 # Fetch and print pull request data from the database
