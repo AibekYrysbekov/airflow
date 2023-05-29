@@ -20,18 +20,13 @@
 
 
 from db import create_db_connection, create_pull_requests_table, insert_prs_to_db, fetch_pull_requests
-from gh import query_prs
+from gh import query_prs, load_token, get_api_endpoint
 
 # Set up authentication with access token
-with open('token.txt', 'r') as file:
-    access_token = file.read().strip()
-
-headers = {'Authorization': f'token {access_token}'}
+headers = load_token('token.txt')
 
 # Set up API endpoint
-OWNER = 'apache'
-REPO = 'airflow'
-API_ENDPOINT = f'https://api.github.com/repos/{OWNER}/{REPO}/pulls'
+API_ENDPOINT = get_api_endpoint()
 
 # Connect to the SQLite database
 conn = create_db_connection('pull_requests.db')
