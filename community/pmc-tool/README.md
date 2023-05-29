@@ -1,6 +1,6 @@
 # Community health monitor for the PMC
 
-This is a project developed as part of Google Summer of Code 2023. See the [proposal document](link to the proposal). The project started being developed by @AibekYrysbekov , with mentorship from @aijamalnk and @pabloem.
+This is a project developed as part of Google Summer of Code 2023. See the [proposal document](https://docs.google.com/document/d/1v6JCx5QWhod5Z1Q3S6CfRCDeWqkNR6RUeiQ25-vUR6w/edit?usp=sharing). The project started being developed by @AibekYrysbekov , with mentorship from @aijamalnk and @pabloem.
 
 The objective is to develop a tool that can be used to analyze information about an open source community. It queries information from the GitHub API and generates reports on the latest state of the community.
 
