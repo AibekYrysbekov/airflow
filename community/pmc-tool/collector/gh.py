@@ -38,18 +38,16 @@ def get_api_endpoint():
     return f'https://api.github.com/repos/{OWNER}/{REPO}/pulls'
 
 
-def query_prs(api_endpoint, headers):
+def query_prs():
     """
     Queries the GitHub API for open pull requests.
-
-    Args:
-        api_endpoint (str): The API endpoint to query.
-        headers (dict): Headers containing the authentication token.
 
     Returns:
         list: A list of pull requests.
 
     """
+    api_endpoint = get_api_endpoint()
+    headers = load_token('token.txt')
     prs = []
     page_number = 1
 
@@ -64,3 +62,29 @@ def query_prs(api_endpoint, headers):
         page_number += 1
 
     return prs
+
+
+def query_issues():
+    """
+    Queries the GitHub API for open issues.
+
+    Returns:
+        list: A list of issues.
+
+    """
+    api_endpoint = get_api_endpoint()
+    headers = load_token('token.txt')
+    issues = []
+    page_number = 1
+
+    while True:
+        response = requests.get(api_endpoint, headers=headers, params={'state': 'open', 'page': page_number})
+        issue_data = response.json()
+
+        if not issue_data:
+            break
+
+        issues.extend(issue_data)
+        page_number += 1
+
+    return issues
