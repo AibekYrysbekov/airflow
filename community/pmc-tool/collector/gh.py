@@ -24,7 +24,7 @@ import requests
 # Set up authentication with access token
 
 
-def load_token(file_path):
+def _load_token(file_path):
     with open(file_path, 'r') as file:
         access_token = file.read().strip()
 
@@ -32,10 +32,15 @@ def load_token(file_path):
     return headers
 
 
-def get_api_endpoint():
+def _get_api_endpoint(endpoint):
     OWNER = 'apache'
     REPO = 'airflow'
-    return f'https://api.github.com/repos/{OWNER}/{REPO}/pulls'
+    if endpoint == 'pulls':
+        return f'https://api.github.com/repos/{OWNER}/{REPO}/pulls'
+    elif endpoint == 'issues':
+        return f'https://api.github.com/repos/{OWNER}/{REPO}/issues'
+    else:
+        raise ValueError(f'Invalid endpoint: {endpoint}')
 
 
 def query_prs():
@@ -46,8 +51,8 @@ def query_prs():
         list: A list of pull requests.
 
     """
-    api_endpoint = get_api_endpoint()
-    headers = load_token('token.txt')
+    api_endpoint = _get_api_endpoint('pulls')
+    headers = _load_token('token.txt')
     prs = []
     page_number = 1
 
@@ -72,8 +77,8 @@ def query_issues():
         list: A list of issues.
 
     """
-    api_endpoint = get_api_endpoint()
-    headers = load_token('token.txt')
+    api_endpoint = _get_api_endpoint('issues')
+    headers = _load_token('token.txt')
     issues = []
     page_number = 1
 
