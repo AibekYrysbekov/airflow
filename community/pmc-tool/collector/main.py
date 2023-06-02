@@ -64,22 +64,21 @@ for issue in issues:
     issue_authors_count[author] += 1
 
 # Insert pull request and issue data into the database
-insert_pull_requests_to_db(conn, prs=list(pr_authors_count.items()))
-insert_issues_to_db(conn, issues=list(issue_authors_count.items()))
+pr_data_to_insert = [{'author': author, 'count': count} for author, count in pr_authors_count.items()]
+insert_pull_requests_to_db(conn, prs=pr_data_to_insert)
+
+issue_data_to_insert = [{'author': author, 'count': count} for author, count in issue_authors_count.items()]
+insert_issues_to_db(conn, issues=issue_data_to_insert)
 
 # Fetch and print pull request data from the database
 pr_results = fetch_pull_requests(conn)
 logging.info("Verifying pull requests:")
-for row in pr_results:
-    author, count = row
-    print(f'Author: {author}, PRs: {count}')
+assert_equal(pr_results, pr_authors_count)
 
 # Fetch and print issue data from the database
 issue_results = fetch_issues(conn)
-print("Issues:")
-for row in issue_results:
-    author, count = row
-    print(f'Author: {author}, Issues: {count}')
+logging.info("Verifying issues:")
+assert_equal(issue_results, issue_authors_count)
 
 # Close the database connection
 conn.close()
