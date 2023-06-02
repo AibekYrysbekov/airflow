@@ -38,7 +38,7 @@ insert_issues_to_db(conn, issues=list(issue_authors_count.items()))
 
 # Fetch and print pull request data from the database
 pr_results = fetch_pull_requests(conn)
-print("Pull Requests:")
+logging.info("Verifying pull requests:")
 for row in pr_results:
     author, count = row
     print(f'Author: {author}, PRs: {count}')
