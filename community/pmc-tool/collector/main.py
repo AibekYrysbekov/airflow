@@ -64,11 +64,11 @@ for issue in issues:
     issue_authors_count[author] += 1
 
 # Insert pull request and issue data into the database
-pr_data_to_insert = [{'author': author, 'count': count} for author, count in pr_authors_count.items()]
-insert_pull_requests_to_db(conn, prs=pr_data_to_insert)
+insert_pull_requests_to_db(conn, prs=list(pr_authors_count.items()))
 
-issue_data_to_insert = [{'author': author, 'count': count} for author, count in issue_authors_count.items()]
-insert_issues_to_db(conn, issues=issue_data_to_insert)
+# issue_data_to_insert = [{'author': author, 'count': count} for author, count in issue_authors_count.items()]
+# insert_issues_to_db(conn, issues=issue_data_to_insert)
+insert_issues_to_db(conn, issues=list(issue_authors_count.items()))
 
 # Fetch and print pull request data from the database
 pr_results = fetch_pull_requests(conn)

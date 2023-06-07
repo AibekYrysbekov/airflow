@@ -34,19 +34,15 @@ def create_issues_table(conn):
 
 def insert_pull_requests_to_db(conn, prs):
     c = conn.cursor()
-    for pr in prs:
-        author_username = pr['author']
-        count = pr['count']
-        c.execute('INSERT INTO pullRequests (author_username, count) VALUES (?, ?)', (author_username, count))
+    for author, count in prs:
+        c.execute('INSERT INTO pullRequests (author_username, count) VALUES (?, ?)', (author, count))
     conn.commit()
 
 
 def insert_issues_to_db(conn, issues):
     c = conn.cursor()
-    for issue in issues:
-        creator_username = issue['author']
-        count = issue['count']
-        c.execute('INSERT INTO issues (creator_username, count) VALUES (?, ?)', (creator_username, count))
+    for author, count in issues:
+        c.execute('INSERT INTO issues (creator_username, count) VALUES (?, ?)', (author, count))
     conn.commit()
 
 
