@@ -24,7 +24,7 @@ import requests
 # Set up authentication with access token
 
 
-def load_token(file_path):
+def _load_token(file_path):
     with open(file_path, 'r') as file:
         access_token = file.read().strip()
 
@@ -32,24 +32,27 @@ def load_token(file_path):
     return headers
 
 
-def get_api_endpoint():
+def _get_api_endpoint(endpoint):
     OWNER = 'apache'
     REPO = 'airflow'
-    return f'https://api.github.com/repos/{OWNER}/{REPO}/pulls'
+    if endpoint == 'pulls':
+        return f'https://api.github.com/repos/{OWNER}/{REPO}/pulls'
+    elif endpoint == 'issues':
+        return f'https://api.github.com/repos/{OWNER}/{REPO}/issues'
+    else:
+        raise ValueError(f'Invalid endpoint: {endpoint}')
 
 
-def query_prs(api_endpoint, headers):
+def query_prs():
     """
     Queries the GitHub API for open pull requests.
-
-    Args:
-        api_endpoint (str): The API endpoint to query.
-        headers (dict): Headers containing the authentication token.
 
     Returns:
         list: A list of pull requests.
 
     """
+    api_endpoint = _get_api_endpoint('pulls')
+    headers = _load_token('token.txt')
     prs = []
     page_number = 1
 
@@ -64,3 +67,29 @@ def query_prs(api_endpoint, headers):
         page_number += 1
 
     return prs
+
+
+def query_issues():
+    """
+    Queries the GitHub API for open issues.
+
+    Returns:
+        list: A list of issues.
+
+    """
+    api_endpoint = _get_api_endpoint('issues')
+    headers = _load_token('token.txt')
+    issues = []
+    page_number = 1
+
+    while True:
+        response = requests.get(api_endpoint, headers=headers, params={'state': 'open', 'page': page_number})
+        issue_data = response.json()
+
+        if not issue_data:
+            break
+
+        issues.extend(issue_data)
+        page_number += 1
+
+    return issues
