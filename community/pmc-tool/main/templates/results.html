@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+</head>
+<body>
+    <h1>Pull Request Results:</h1>
+    <ul>
+    {% for author, count in pr_results %}
+        <li>{{ author }}: {{ count }}</li>
+    {% endfor %}
+    </ul>
+
+    <h1>Issue Results:</h1>
+    <ul>
+    {% for author, count in issue_results %}
+        <li>{{ author }}: {{ count }}</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

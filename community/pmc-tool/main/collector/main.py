@@ -19,9 +19,9 @@
 """This file contains logic for interfacing with GitHub and fetching PR and issue data."""
 
 
-from db import create_db_connection, create_pull_requests_table, insert_pull_requests_to_db, \
+from main.collector.db import create_db_connection, create_pull_requests_table, insert_pull_requests_to_db, \
     fetch_pull_requests, create_issues_table, fetch_issues, insert_issues_to_db
-from gh import query_prs, query_issues
+from main.collector.gh import query_prs, query_issues
 import logging
 
 
