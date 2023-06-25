@@ -1,2 +1,4 @@
-collector/token.txt
-collector/pull_requests.db
+main/collector/token.txt
+main/collector/pull_requests.db
+db.sqlite3
+

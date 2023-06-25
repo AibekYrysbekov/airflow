@@ -17,7 +17,7 @@
 # under the License.
 
 """This file contains functionality to query data from GitHub"""
-
+import os
 
 import requests
 
@@ -25,6 +25,7 @@ import requests
 
 
 def _load_token(file_path):
+    file_path = os.path.join(os.path.dirname(__file__), file_path)
     with open(file_path, 'r') as file:
         access_token = file.read().strip()
 
