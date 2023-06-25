@@ -58,6 +58,6 @@ Python (version 3.7 or above)
 
      python manage.py runserver
 
-3. After starting the server, open a web browser and navigate to http://localhost:8000/ to see your application.
+2. After starting the server, open a web browser and navigate to http://localhost:8000/ to see your application.
 
 
