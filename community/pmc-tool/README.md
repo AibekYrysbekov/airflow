@@ -16,7 +16,7 @@ How to Use
 2.Install the required dependencies. The code relies on the requests and sqlite3 modules. You can install them using the following command:
 
     pip install requests sqlite3
-    
+
 3. Specify the repository owner and repository name in the owner and repo variables, respectively. This allows the code to fetch pull request data from the desired repository.
 
 4. Run the code. It will make requests to the GitHub API, fetch the pull request data from the specified repository, and save it to a SQLite database. A file named pull_requests.db will be       created, containing a table named pull_requests with columns for author (the pull request author) and count (the number of pull requests).
@@ -38,7 +38,6 @@ Follow these instructions to run the Django application:
 Before running the application, make sure you have the following components installed:
 
 Python (version 3.7 or above)
-Django (version 3.0 or above)
 
 ## Installing Dependencies
 
@@ -50,6 +49,7 @@ Django (version 3.0 or above)
 ## Configuring the Database
 1. In the settings.py file, ensure that the database settings match your configuration. By default, SQLite is used as the database.
 2. Run the migrations to create the necessary database tables:
+  "pullRequests", "issues"
 
      python manage.py migrate
 
@@ -57,7 +57,7 @@ Django (version 3.0 or above)
 1. In the terminal, run the following command to start the Django development server:
 
      python manage.py runserver
-   
+
 3. After starting the server, open a web browser and navigate to http://localhost:8000/ to see your application.
 
 
