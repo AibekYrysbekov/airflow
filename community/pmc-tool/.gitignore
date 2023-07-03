@@ -1,4 +1,5 @@
 main/collector/token.txt
 main/collector/pull_requests.db
+pull_requests.db
 db.sqlite3
 

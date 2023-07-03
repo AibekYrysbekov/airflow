@@ -26,6 +26,9 @@ import requests
 
 def _load_token(file_path):
     file_path = os.path.join(os.path.dirname(__file__), file_path)
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"Token file not found: {file_path}")
+
     with open(file_path, 'r') as file:
         access_token = file.read().strip()
 
