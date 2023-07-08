@@ -18,10 +18,10 @@
     {% endfor %}
     </ul>
 
-    <h1>Authors with First Pull Request:</h1>
+    <h1>First Pull Request Authors (Last Week):</h1>
     <ul>
-    {% for author in first_pr_authors %}
-        <li>{{ author }}</li>
+    {% for author, date in first_pr_authors %}
+        <li>{{ author }}: {{ date }}</li>
     {% endfor %}
     </ul>
 </body>

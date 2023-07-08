@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from main.collector.db import create_db_connection, create_pull_requests_table, insert_pull_requests_to_db, \
-    fetch_pull_requests, create_issues_table, fetch_issues, insert_issues_to_db
+    fetch_pull_requests, create_issues_table, fetch_issues, insert_issues_to_db, \
+    fetch_first_pr_authors_last_week
 from main.collector.gh import query_prs, query_issues
 import logging
+import datetime
 
 
 def assert_equal(db_data, api_data):
@@ -58,11 +60,8 @@ def save_data_to_database(request):
     logging.info("Verifying issues:")
     assert_equal(issue_results, issue_authors_count)
 
-    # Fetch authors with first pull request
-    first_pr_authors = []
-    for author, count in pr_results:
-        if count == 1:
-            first_pr_authors.append(author)
+    # Find authors with the first pull request in the last week
+    first_pr_authors = fetch_first_pr_authors_last_week(conn)
 
     # Close the database connection
     conn.close()
