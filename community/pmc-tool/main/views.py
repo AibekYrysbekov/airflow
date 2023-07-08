@@ -58,7 +58,15 @@ def save_data_to_database(request):
     logging.info("Verifying issues:")
     assert_equal(issue_results, issue_authors_count)
 
+    # Fetch authors with first pull request
+    first_pr_authors = []
+    for author, count in pr_results:
+        if count == 1:
+            first_pr_authors.append(author)
+
     # Close the database connection
     conn.close()
 
-    return render(request, 'results.html', {'pr_results': pr_results, 'issue_results': issue_results})
+    return render(request, 'results.html', {'pr_results': pr_results, 'issue_results': issue_results,
+                                            'first_pr_authors': first_pr_authors})
+

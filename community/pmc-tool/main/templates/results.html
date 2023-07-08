@@ -17,5 +17,12 @@
         <li>{{ author }}: {{ count }}</li>
     {% endfor %}
     </ul>
+
+    <h1>Authors with First Pull Request:</h1>
+    <ul>
+    {% for author in first_pr_authors %}
+        <li>{{ author }}</li>
+    {% endfor %}
+    </ul>
 </body>
 </html>
