@@ -24,5 +24,14 @@
         <li>{{ author }}: {{ date }}</li>
     {% endfor %}
     </ul>
+
+    <h1>New Authors (First PR in Last Week):</h1>
+    <ul>
+    {% for author in new_authors %}
+        <li>{{ author }}</li>
+    {% endfor %}
+    </ul>
+
+
 </body>
 </html>

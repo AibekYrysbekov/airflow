@@ -79,6 +79,17 @@ def fetch_first_pr_authors_last_week(conn):
     return results
 
 
+def fetch_first_pr_date(conn, author):
+    c = conn.cursor()
+    c.execute('SELECT MIN(creation_timestamp) FROM pullRequests WHERE author_username = ?', (author,))
+    result = c.fetchone()
+    if result and result[0]:
+        date_string = result[0]
+        date_object = datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S')
+        return date_object
+    else:
+        return None
+
 
 
 
