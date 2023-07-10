@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from main.collector.db import create_db_connection, create_pull_requests_table, insert_pull_requests_to_db, \
     fetch_pull_requests, create_issues_table, fetch_issues, insert_issues_to_db, \
-    fetch_first_pr_authors_last_week
+    fetch_first_pr_authors_last_week, fetch_first_pr_date
 from main.collector.gh import query_prs, query_issues
 import logging
 import datetime
@@ -63,9 +63,19 @@ def save_data_to_database(request):
     # Find authors with the first pull request in the last week
     first_pr_authors = fetch_first_pr_authors_last_week(conn)
 
+    # Find authors with the first pull request in the last week
+    current_date = datetime.date.today()
+    one_week_ago = current_date - datetime.timedelta(days=7)
+    new_authors = []
+
+    for author, count in pr_authors_count.items():
+        first_pr_date = fetch_first_pr_date(conn, author)
+        if first_pr_date and first_pr_date.date() >= one_week_ago and count == 1:
+            new_authors.append(author)
+
     # Close the database connection
     conn.close()
 
     return render(request, 'results.html', {'pr_results': pr_results, 'issue_results': issue_results,
-                                            'first_pr_authors': first_pr_authors})
+                                            'first_pr_authors': first_pr_authors, 'new_authors': new_authors})
 
