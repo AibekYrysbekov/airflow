@@ -17,5 +17,19 @@
         <li>{{ author }}: {{ count }}</li>
     {% endfor %}
     </ul>
+
+    <h1>PR Authors in last week(all):</h1>
+    <ul>
+    {% for author, date in first_pr_authors %}
+        <li>{{ author }}: {{ date }}</li>
+    {% endfor %}
+    </ul>
+
+    <h1>New Authors(First PR):</h1>
+    <ul>
+    {% for author in new_authors %}
+        <li>{{ author }}</li>
+    {% endfor %}
+    </ul>
 </body>
 </html>

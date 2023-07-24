@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import sqlite3
 
 
@@ -58,3 +59,37 @@ def fetch_issues(conn):
     c.execute('SELECT creator_username, count FROM issues')
     results = c.fetchall()
     return results
+
+
+def fetch_first_pr_authors_last_week(conn):
+    c = conn.cursor()
+
+    # Calculate the date range for the last week
+    end_date = datetime.now().date()
+    start_date = end_date - timedelta(days=7)
+
+    c.execute('''
+        SELECT author_username, MIN(creation_timestamp)
+        FROM pullRequests
+        WHERE DATE(creation_timestamp) >= ? AND DATE(creation_timestamp) <= ?
+        GROUP BY author_username
+    ''', (start_date, end_date))
+
+    results = c.fetchall()
+    return results
+
+
+def fetch_first_pr_date(conn, author):
+    c = conn.cursor()
+    c.execute('SELECT MIN(creation_timestamp) FROM pullRequests WHERE author_username = ?', (author,))
+    result = c.fetchone()
+    if result and result[0]:
+        date_string = result[0]
+        date_object = datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S')
+        return date_object
+    else:
+        return None
+
+
+
+
