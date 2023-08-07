@@ -1,12 +1,21 @@
-from main.collector.db import create_db_connection, create_pull_requests_table, insert_pull_requests_to_db, \
-    create_issues_table, insert_issues_to_db
+from main.collector.db import (
+    create_db_connection,
+    create_pull_requests_table,
+    insert_pull_requests_to_db,
+    create_issues_table,
+    insert_issues_to_db,
+)
 from main.collector.gh import query_prs, query_issues
-from main.collector.queries import fetch_pull_requests, fetch_issues, fetch_first_pr_authors_last_week, \
-    get_new_authors
+from main.collector.queries import (
+    fetch_pull_requests,
+    fetch_issues,
+    fetch_first_pr_authors_last_week,
+    get_new_authors,
+)
 
 
 def fetch_and_store_data_from_github():
-    conn = create_db_connection('pull_requests.db')
+    conn = create_db_connection("pull_requests.db")
     create_pull_requests_table(conn)
     create_issues_table(conn)
 
@@ -14,15 +23,13 @@ def fetch_and_store_data_from_github():
     issues = query_issues()
 
     pr_authors_count = {}
-
     for pr in pull_requests:
-        author = pr['user']['login']
+        author = pr["user"]["login"]
         pr_authors_count[author] = pr_authors_count.get(author, 0) + 1
 
     issue_authors_count = {}
-
     for issue in issues:
-        author = issue['user']['login']
+        author = issue["user"]["login"]
         issue_authors_count[author] = issue_authors_count.get(author, 0) + 1
 
     insert_pull_requests_to_db(conn, prs=list(pr_authors_count.items()))
@@ -35,7 +42,7 @@ def fetch_and_store_data_from_github():
 
 def read_reports():
     pr_authors_count = fetch_and_store_data_from_github()
-    conn = create_db_connection('pull_requests.db')
+    conn = create_db_connection("pull_requests.db")
 
     pr_results = fetch_pull_requests(conn)
     issue_results = fetch_issues(conn)

@@ -1,7 +1,10 @@
 import datetime
-
-from main.collector.db import fetch_first_pr_authors_last_week, fetch_first_pr_date, fetch_pull_requests, \
-    fetch_issues
+from main.collector.db import (
+    fetch_first_pr_authors_last_week,
+    fetch_first_pr_date,
+    fetch_pull_requests,
+    fetch_issues,
+)
 from main.collector.validations import assert_equal
 
 

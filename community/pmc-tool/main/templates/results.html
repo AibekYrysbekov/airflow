@@ -1,35 +1,65 @@
+<!-- results.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Results</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <h1>Pull Request Results:</h1>
-    <ul>
-    {% for author, count in pr_results %}
-        <li>{{ author }}: {{ count }}</li>
-    {% endfor %}
-    </ul>
+    <div class="container">
+        <h1 class="my-4">Results</h1>
 
-    <h1>Issue Results:</h1>
-    <ul>
-    {% for author, count in issue_results %}
-        <li>{{ author }}: {{ count }}</li>
-    {% endfor %}
-    </ul>
+        <form method="post" action="" class="mb-4">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="data_type">Select data type:</label>
+                <select name="data_type" id="data_type" class="form-control">
+                    <option value="pull_requests">Pull Requests</option>
+                    <option value="issues">Issues</option>
+                    <option value="pr_authors_last_week">PR Authors (Last Week)</option>
+                    <option value="new_authors">New Authors</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Show Data</button>
+        </form>
 
-    <h1>PR Authors in last week(all):</h1>
-    <ul>
-    {% for author, date in first_pr_authors %}
-        <li>{{ author }}: {{ date }}</li>
-    {% endfor %}
-    </ul>
+        {% if data %}
+            <div class="mb-4">
+                {% if data_type == "pull_requests" %}
+                    <h2>Pull Requests</h2>
+                    <ul class="list-group">
+                        {% for item in data %}
+                            <li class="list-group-item">{{ item.0 }}: {{ item.1 }}</li>
+                        {% endfor %}
+                    </ul>
+                {% elif data_type == "issues" %}
+                    <h2>Issues</h2>
+                    <ul class="list-group">
+                        {% for item in data %}
+                            <li class="list-group-item">{{ item.0 }}: {{ item.1 }}</li>
+                        {% endfor %}
+                    </ul>
+                {% elif data_type == "pr_authors_last_week" %}
+                    <h2>PR Authors Last Week</h2>
+                    <ul class="list-group">
+                        {% for item in data %}
+                            <li class="list-group-item">{{ item.0 }}: {{ item.1 }}</li>
+                        {% endfor %}
+                    </ul>
+                {% elif data_type == "new_authors" %}
+                    <h2>New Authors</h2>
+                    <ul class="list-group">
+                        {% for author in data %}
+                            <li class="list-group-item">{{ author }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endif %}
 
-    <h1>New Authors(First PR):</h1>
-    <ul>
-    {% for author in new_authors %}
-        <li>{{ author }}</li>
-    {% endfor %}
-    </ul>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

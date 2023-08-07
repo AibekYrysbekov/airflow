@@ -21,47 +21,38 @@ import os
 
 import requests
 
-# Set up authentication with access token
-
 
 def _load_token(file_path):
     file_path = os.path.join(os.path.dirname(__file__), file_path)
     if not os.path.isfile(file_path):
         raise FileNotFoundError(f"Token file not found: {file_path}")
 
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         access_token = file.read().strip()
 
-    headers = {'Authorization': f'token {access_token}'}
+    headers = {"Authorization": f"token {access_token}"}
     return headers
 
 
 def _get_api_endpoint(endpoint):
-    OWNER = 'apache'
-    REPO = 'airflow'
-    if endpoint == 'pulls':
-        return f'https://api.github.com/repos/{OWNER}/{REPO}/pulls'
-    elif endpoint == 'issues':
-        return f'https://api.github.com/repos/{OWNER}/{REPO}/issues'
+    OWNER = "apache"
+    REPO = "airflow"
+    if endpoint == "pulls":
+        return f"https://api.github.com/repos/{OWNER}/{REPO}/pulls"
+    elif endpoint == "issues":
+        return f"https://api.github.com/repos/{OWNER}/{REPO}/issues"
     else:
-        raise ValueError(f'Invalid endpoint: {endpoint}')
+        raise ValueError(f"Invalid endpoint: {endpoint}")
 
 
 def query_prs():
-    """
-    Queries the GitHub API for open pull requests.
-
-    Returns:
-        list: A list of pull requests.
-
-    """
-    api_endpoint = _get_api_endpoint('pulls')
-    headers = _load_token('token.txt')
+    api_endpoint = _get_api_endpoint("pulls")
+    headers = _load_token("token.txt")
     prs = []
     page_number = 1
 
     while True:
-        response = requests.get(api_endpoint, headers=headers, params={'state': 'open', 'page': page_number})
+        response = requests.get(api_endpoint, headers=headers, params={"state": "open", "page": page_number})
         pull_requests = response.json()
 
         if not pull_requests:
@@ -74,20 +65,13 @@ def query_prs():
 
 
 def query_issues():
-    """
-    Queries the GitHub API for open issues.
-
-    Returns:
-        list: A list of issues.
-
-    """
-    api_endpoint = _get_api_endpoint('issues')
-    headers = _load_token('token.txt')
+    api_endpoint = _get_api_endpoint("issues")
+    headers = _load_token("token.txt")
     issues = []
     page_number = 1
 
     while True:
-        response = requests.get(api_endpoint, headers=headers, params={'state': 'open', 'page': page_number})
+        response = requests.get(api_endpoint, headers=headers, params={"state": "open", "page": page_number})
         issue_data = response.json()
 
         if not issue_data:
