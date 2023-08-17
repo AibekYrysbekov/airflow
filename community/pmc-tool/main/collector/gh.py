@@ -17,8 +17,8 @@
 # under the License.
 
 """This file contains functionality to query data from GitHub"""
-import os
 
+import os
 import requests
 
 

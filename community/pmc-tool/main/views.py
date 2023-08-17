@@ -1,7 +1,8 @@
-# views.py
 from django.shortcuts import render
-from main.collector.db import create_db_connection, fetch_pull_requests, fetch_issues, fetch_first_pr_authors_last_week
+from main.collector.db import (create_db_connection, fetch_pull_requests, fetch_issues,
+                               fetch_first_pr_authors_last_week)
 from main.collector.queries import get_new_authors
+
 
 def render_results(request):
     if request.method == 'POST':
