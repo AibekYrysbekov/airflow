@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import save_data_to_database
+from .views import render_results
 
 urlpatterns = [
-    path('', save_data_to_database, name='save_data'),
+    path("", render_results, name="save_data"),
 ]

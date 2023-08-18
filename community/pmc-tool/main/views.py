@@ -1,64 +1,43 @@
 from django.shortcuts import render
-from main.collector.db import create_db_connection, create_pull_requests_table, insert_pull_requests_to_db, \
-    fetch_pull_requests, create_issues_table, fetch_issues, insert_issues_to_db
-from main.collector.gh import query_prs, query_issues
-import logging
+from main.collector.db import (create_db_connection, fetch_pull_requests, fetch_issues,
+                               fetch_first_pr_authors_last_week)
+from main.collector.queries import get_new_authors
 
 
-def assert_equal(db_data, api_data):
-    db_set = set(db_data)
-    api_set = set(api_data.items())
-    if db_set != api_set:
-        raise ValueError('The data from the database does not match the data from the API. '
-                         + 'Database has %s extra. ' % (db_set - api_set)
-                         + 'API has %s extra.' % (api_set - db_set))
+def render_results(request):
+    if request.method == 'POST':
+        data_type = request.POST.get('data_type')
 
+        conn = create_db_connection("pull_requests.db")
 
-def save_data_to_database(request):
-    # Connect to the SQLite database
-    conn = create_db_connection('pull_requests.db')
+        if data_type == "pull_requests":
+            pr_results = fetch_pull_requests(conn)
+            data = pr_results
+        elif data_type == "issues":
+            issue_results = fetch_issues(conn)
+            data = issue_results
+        elif data_type == "pr_authors_last_week":
+            first_pr_authors = fetch_first_pr_authors_last_week(conn)
+            data = first_pr_authors
+        elif data_type == "new_authors":
+            pr_authors_count = dict(fetch_pull_requests(conn))
+            new_authors = get_new_authors(conn, pr_authors_count)
+            data = new_authors
+        else:
+            data = None
+            data_type = None
 
-    # Create a table to store pull requests if it doesn't exist
-    create_pull_requests_table(conn)
-    create_issues_table(conn)
+        conn.close()
 
-    # Retrieve list of pull requests
-    pull_requests = query_prs()
-    issues = query_issues()
+    else:
+        data = None
+        data_type = None
 
-    # Extract list of pull request authors
-    pr_authors_count = {}
-
-    for pr in pull_requests:
-        author = pr['user']['login']
-        if author not in pr_authors_count:
-            pr_authors_count[author] = 0
-        pr_authors_count[author] += 1
-
-    # Extract list of issue authors
-    issue_authors_count = {}
-
-    for issue in issues:
-        author = issue['user']['login']
-        if author not in issue_authors_count:
-            issue_authors_count[author] = 0
-        issue_authors_count[author] += 1
-
-    # Insert pull request and issue data into the database
-    insert_pull_requests_to_db(conn, prs=list(pr_authors_count.items()))
-    insert_issues_to_db(conn, issues=list(issue_authors_count.items()))
-
-    # Fetch and print pull request data from the database
-    pr_results = fetch_pull_requests(conn)
-    logging.info("Verifying pull requests:")
-    assert_equal(pr_results, pr_authors_count)
-
-    # Fetch and print issue data from the database
-    issue_results = fetch_issues(conn)
-    logging.info("Verifying issues:")
-    assert_equal(issue_results, issue_authors_count)
-
-    # Close the database connection
-    conn.close()
-
-    return render(request, 'results.html', {'pr_results': pr_results, 'issue_results': issue_results})
+    return render(
+        request,
+        "results.html",
+        {
+            "data": data,
+            "data_type": data_type,
+        },
+    )
