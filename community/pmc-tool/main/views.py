@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.http import JsonResponse
 from datetime import datetime
 from .collector.data_processor import fetch_and_store_data_from_github
 from .collector.db import (
@@ -42,8 +41,6 @@ def render_results(request):
             )
 
         conn = create_db_connection("pull_requests.db")
-
-        # Остальной код остается без изменений
 
 
         if data_type == "pull_requests":

@@ -46,7 +46,6 @@ def _get_api_endpoint(endpoint):
         raise ValueError(f"Invalid endpoint: {endpoint}")
 
 
-
 def query_prs(last_timestamp):
     api_endpoint = _get_api_endpoint("pulls")
     headers = _load_token("token.txt")
