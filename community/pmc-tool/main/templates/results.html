@@ -1,14 +1,16 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
     <title>Results</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container">
         <h1 class="my-4">Results</h1>
 
-        <form method="post" action="" class="mb-4">
+        <form method="post" action="{% url 'render_results' %}" class="mb-4">
             {% csrf_token %}
             <div class="form-group">
                 <label for="data_type">Select data type:</label>
@@ -19,8 +21,27 @@
                     <option value="new_authors">New Authors</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label for="start_date">Start Date:</label>
+                <input type="date" name="start_date" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="end_date">End Date:</label>
+                <input type="date" name="end_date" class="form-control">
+            </div>
             <button type="submit" class="btn btn-primary">Show Data</button>
         </form>
+
+        <form method="post" action="{% url 'update_data' %}" class="mb-4">
+            {% csrf_token %}
+            <button type="submit" name="update_data" class="btn btn-success">Update Data</button>
+        </form>
+
+        {% if update_message %}
+        <div class="alert alert-success mt-3">
+            {{ update_message }}
+        </div>
+        {% endif %}
 
         {% if data %}
             <div class="mb-4">
@@ -55,7 +76,6 @@
                 {% endif %}
             </div>
         {% endif %}
-
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>

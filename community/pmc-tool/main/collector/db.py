@@ -51,26 +51,24 @@ def insert_issues_to_db(conn, issues):
     conn.commit()
 
 
-def fetch_pull_requests(conn):
+def fetch_pull_requests(conn, start_date, end_date):
     c = conn.cursor()
-    c.execute("SELECT author_username, count FROM pullRequests")
+    c.execute("SELECT author_username, count FROM pullRequests WHERE creation_timestamp BETWEEN ? AND ?", (start_date, end_date))
     results = c.fetchall()
     return results
 
 
-def fetch_issues(conn):
+def fetch_issues(conn, start_date, end_date):
     c = conn.cursor()
-    c.execute("SELECT creator_username, count FROM issues")
+    c.execute("SELECT creator_username, count FROM issues WHERE creation_timestamp BETWEEN ? AND ?", (start_date, end_date))
     results = c.fetchall()
     return results
 
 
 def fetch_first_pr_authors_last_week(conn):
     c = conn.cursor()
-
     end_date = datetime.now().date()
     start_date = end_date - timedelta(days=7)
-
     c.execute(
         """
         SELECT author_username, MIN(creation_timestamp)
@@ -85,13 +83,33 @@ def fetch_first_pr_authors_last_week(conn):
     return results
 
 
-def fetch_first_pr_date(conn, author):
+def fetch_new_authors(conn, start_date, end_date):
     c = conn.cursor()
-    c.execute("SELECT MIN(creation_timestamp) FROM pullRequests WHERE author_username = ?", (author,))
+
+    c.execute(
+        """
+        SELECT DISTINCT author_username
+        FROM pullRequests
+        WHERE DATE(creation_timestamp) >= ? AND DATE(creation_timestamp) <= ?
+        AND author_username NOT IN (
+            SELECT DISTINCT author_username
+            FROM pullRequests
+            WHERE DATE(creation_timestamp) < ?
+        )
+        """
+        , (start_date, end_date, start_date)
+    )
+
+    results = c.fetchall()
+    new_authors = [result[0] for result in results]
+    return new_authors
+
+
+def get_last_timestamp_from_db(conn):
+    c = conn.cursor()
+    c.execute("SELECT MAX(creation_timestamp) FROM pullRequests")
     result = c.fetchone()
     if result and result[0]:
-        date_string = result[0]
-        date_object = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
-        return date_object
+        return datetime.strptime(result[0], "%Y-%m-%d %H:%M:%S")
     else:
-        return None
+        return datetime.min
