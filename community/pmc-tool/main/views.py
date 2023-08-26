@@ -5,7 +5,7 @@ from .collector.db import (
     create_db_connection,
     fetch_pull_requests,
     fetch_issues,
-    fetch_first_pr_authors_last_week, fetch_new_authors
+    fetch_new_authors_pr, fetch_new_authors_is
 )
 
 
@@ -42,19 +42,18 @@ def render_results(request):
 
         conn = create_db_connection("pull_requests.db")
 
-
         if data_type == "pull_requests":
             pr_results = fetch_pull_requests(conn, start_date, end_date)
             data = pr_results
         elif data_type == "issues":
             issue_results = fetch_issues(conn, start_date, end_date)
             data = issue_results
-        elif data_type == "pr_authors_last_week":
-            first_pr_authors = fetch_first_pr_authors_last_week(conn)
-            data = first_pr_authors
-        elif data_type == "new_authors":
-            new_authors = fetch_new_authors(conn, start_date, end_date)
-            data = new_authors
+        elif data_type == "new_authors_pr":
+            new_authors_pr = fetch_new_authors_pr(conn, start_date, end_date)
+            data = new_authors_pr
+        elif data_type == "new_authors_is":
+            new_authors_is = fetch_new_authors_is(conn, start_date, end_date)
+            data = new_authors_is
 
         conn.close()
 

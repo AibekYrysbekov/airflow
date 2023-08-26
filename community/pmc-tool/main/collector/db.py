@@ -65,25 +65,7 @@ def fetch_issues(conn, start_date, end_date):
     return results
 
 
-def fetch_first_pr_authors_last_week(conn):
-    c = conn.cursor()
-    end_date = datetime.now().date()
-    start_date = end_date - timedelta(days=7)
-    c.execute(
-        """
-        SELECT author_username, MIN(creation_timestamp)
-        FROM pullRequests
-        WHERE DATE(creation_timestamp) >= ? AND DATE(creation_timestamp) <= ?
-        GROUP BY author_username
-    """,
-        (start_date, end_date),
-    )
-
-    results = c.fetchall()
-    return results
-
-
-def fetch_new_authors(conn, start_date, end_date):
+def fetch_new_authors_pr(conn, start_date, end_date):
     c = conn.cursor()
 
     c.execute(
@@ -101,8 +83,30 @@ def fetch_new_authors(conn, start_date, end_date):
     )
 
     results = c.fetchall()
-    new_authors = [result[0] for result in results]
-    return new_authors
+    new_authors_pr = [result[0] for result in results]
+    return new_authors_pr
+
+
+def fetch_new_authors_is(conn, start_date, end_date):
+    c = conn.cursor()
+
+    c.execute(
+        """
+        SELECT DISTINCT creator_username
+        FROM issues
+        WHERE DATE(creation_timestamp) >= ? AND DATE(creation_timestamp) <= ?
+        AND creator_username NOT IN (
+            SELECT DISTINCT creator_username
+            FROM issues
+            WHERE DATE(creation_timestamp) < ?
+        )
+        """
+        , (start_date, end_date, start_date)
+    )
+
+    results = c.fetchall()
+    new_authors_is = [result[0] for result in results]
+    return new_authors_is
 
 
 def get_last_timestamp_from_db(conn):

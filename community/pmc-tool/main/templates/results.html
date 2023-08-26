@@ -17,8 +17,8 @@
                 <select name="data_type" id="data_type" class="form-control">
                     <option value="pull_requests">Pull Requests</option>
                     <option value="issues">Issues</option>
-                    <option value="pr_authors_last_week">PR Authors (Last Week)</option>
-                    <option value="new_authors">New Authors</option>
+                    <option value="new_authors_pr">New Authors PR</option>
+                    <option value="new_authors_is">New Authors (Issues)</option>
                 </select>
             </div>
             <div class="form-group">
@@ -59,15 +59,15 @@
                             <li class="list-group-item">{{ item.0 }}: {{ item.1 }}</li>
                         {% endfor %}
                     </ul>
-                {% elif data_type == "pr_authors_last_week" %}
-                    <h2>PR Authors Last Week</h2>
+                {% elif data_type == "new_authors_pr" %}
+                    <h2>New Authors PR</h2>
                     <ul class="list-group">
-                        {% for item in data %}
-                            <li class="list-group-item">{{ item.0 }}: {{ item.1 }}</li>
+                        {% for author in data %}
+                            <li class="list-group-item">{{ author }}</li>
                         {% endfor %}
                     </ul>
-                {% elif data_type == "new_authors" %}
-                    <h2>New Authors</h2>
+                {% elif data_type == "new_authors_is" %}
+                    <h2>New Authors (Issues)</h2>
                     <ul class="list-group">
                         {% for author in data %}
                             <li class="list-group-item">{{ author }}</li>
