@@ -2,18 +2,33 @@
 
 This is a project developed as part of Google Summer of Code 2023. See the [proposal document](https://docs.google.com/document/d/1v6JCx5QWhod5Z1Q3S6CfRCDeWqkNR6RUeiQ25-vUR6w/edit?usp=sharing). The project started being developed by @AibekYrysbekov , with mentorship from @aijamalnk and @pabloem.
 
-The objective is to develop a tool that can be used to analyze information about an open source community. It queries information from the GitHub API and generates reports on the latest state of the community.
+## GitHub Data Analysis Tool
 
+The GitHub Data Analysis Tool is a Django web application designed to help users analyze and visualize GitHub data, such as pull requests and issues. This tool allows users to extract valuable insights from their GitHub repositories by providing various features to retrieve, process, and display repository data.
 
-## Saving Pull Request Data to SQLite Database
+## Features
 
-This code is designed to fetch a list of pull requests from a specified GitHub repository and save the obtained data to a SQLite database. It also demonstrates an example of utilizing the saved data by printing it to the console.
+1. Data Retrieval: The application connects to the GitHub API to fetch information about pull requests and issues from a specified repository.
+2. Data Storage: Fetched data is stored in a SQLite database, allowing for efficient data management and retrieval.
+3. Data Visualization: Users can view the data through an intuitive web interface. The tool offers visualizations such as lists of pull requests, issues, authors, and more.
+4. Date Filtering: Users can select a date range to filter the data, enabling analysis of activities within specific time periods.
+5. New Authors: The tool identifies and displays new authors who made their first pull request or issue during the selected date range.
+6. Data Update: The application provides a feature to update data from the GitHub repository, ensuring that the analysis is always based on the latest information.
+
+## How It's Useful
+
+1. The GitHub Data Analysis Tool is particularly useful for open-source project maintainers, development teams, and GitHub repository owners. It offers the following benefits:
+2. Insightful Analysis: With the ability to visualize pull requests and issues, repository owners can gain insights into development trends, identifying busy periods, peak contributors, and more.
+3. New Contributors Tracking: The "New Authors" feature helps identify and recognize new contributors who have recently joined the project, encouraging community engagement.
+4. Performance Evaluation: Teams can evaluate their productivity by analyzing their performance in terms of completed pull requests and resolved issues.
+5. Data-Driven Decision-Making: By analyzing data from different time periods, the tool assists in data-driven decision-making, resource allocation, and project planning.
+6. Monitoring and Maintenance: The tool supports tracking changes over time, making it easier to monitor the health and maintenance of a GitHub repository.
 
 How to Use
 
 1. Create a file named token.txt in the same directory as the script. Inside the token.txt file, save your personal access token for the GitHub API.
 
-2.Install the required dependencies. The code relies on the requests and sqlite3 modules. You can install them using the following command:
+2. Install the required dependencies. The code relies on the requests and sqlite3 modules. You can install them using the following command:
 
     pip install requests sqlite3
 
