@@ -4,17 +4,21 @@ from main.collector.db import (
     insert_pull_requests_to_db,
     create_issues_table,
     insert_issues_to_db,
+    get_last_timestamp_from_db,
 )
 from main.collector.gh import query_prs, query_issues
 
 
 def fetch_and_store_data_from_github():
     conn = create_db_connection("pull_requests.db")
+
     create_pull_requests_table(conn)
     create_issues_table(conn)
 
-    pull_requests = query_prs()
-    issues = query_issues()
+    last_timestamp = get_last_timestamp_from_db(conn)
+
+    pull_requests = query_prs(last_timestamp)
+    issues = query_issues(last_timestamp)
 
     pr_authors_count = {}
     for pr in pull_requests:
@@ -33,17 +37,4 @@ def fetch_and_store_data_from_github():
 
     return pr_authors_count
 
-
-# def read_reports():
-#     pr_authors_count = fetch_and_store_data_from_github()
-#     conn = create_db_connection("pull_requests.db")
-#
-#     pr_results = fetch_pull_requests(conn)
-#     issue_results = fetch_issues(conn)
-#     first_pr_authors = fetch_first_pr_authors_last_week(conn)
-#     new_authors = get_new_authors(conn, pr_authors_count)
-#
-#     conn.close()
-#
-#     return pr_results, issue_results, first_pr_authors, new_authors
 

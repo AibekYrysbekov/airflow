@@ -1,26 +1,47 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
     <title>Results</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container">
         <h1 class="my-4">Results</h1>
 
-        <form method="post" action="" class="mb-4">
+        <form method="post" action="{% url 'render_results' %}" class="mb-4">
             {% csrf_token %}
             <div class="form-group">
                 <label for="data_type">Select data type:</label>
                 <select name="data_type" id="data_type" class="form-control">
                     <option value="pull_requests">Pull Requests</option>
                     <option value="issues">Issues</option>
-                    <option value="pr_authors_last_week">PR Authors (Last Week)</option>
-                    <option value="new_authors">New Authors</option>
+                    <option value="new_authors_pr">New Authors PR</option>
+                    <option value="new_authors_is">New Authors (Issues)</option>
                 </select>
+            </div>
+            <div class="form-group">
+                <label for="start_date">Start Date:</label>
+                <input type="date" name="start_date" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="end_date">End Date:</label>
+                <input type="date" name="end_date" class="form-control">
             </div>
             <button type="submit" class="btn btn-primary">Show Data</button>
         </form>
+
+        <form method="post" action="{% url 'update_data' %}" class="mb-4">
+            {% csrf_token %}
+            <button type="submit" name="update_data" class="btn btn-success">Update Data</button>
+        </form>
+
+        {% if update_message %}
+        <div class="alert alert-success mt-3">
+            {{ update_message }}
+        </div>
+        {% endif %}
 
         {% if data %}
             <div class="mb-4">
@@ -38,15 +59,15 @@
                             <li class="list-group-item">{{ item.0 }}: {{ item.1 }}</li>
                         {% endfor %}
                     </ul>
-                {% elif data_type == "pr_authors_last_week" %}
-                    <h2>PR Authors Last Week</h2>
+                {% elif data_type == "new_authors_pr" %}
+                    <h2>New Authors PR</h2>
                     <ul class="list-group">
-                        {% for item in data %}
-                            <li class="list-group-item">{{ item.0 }}: {{ item.1 }}</li>
+                        {% for author in data %}
+                            <li class="list-group-item">{{ author }}</li>
                         {% endfor %}
                     </ul>
-                {% elif data_type == "new_authors" %}
-                    <h2>New Authors</h2>
+                {% elif data_type == "new_authors_is" %}
+                    <h2>New Authors (Issues)</h2>
                     <ul class="list-group">
                         {% for author in data %}
                             <li class="list-group-item">{{ author }}</li>
@@ -55,7 +76,6 @@
                 {% endif %}
             </div>
         {% endif %}
-
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>

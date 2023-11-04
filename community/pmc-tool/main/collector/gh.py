@@ -19,6 +19,7 @@
 """This file contains functionality to query data from GitHub"""
 
 import os
+from datetime import datetime
 import requests
 
 
@@ -45,7 +46,7 @@ def _get_api_endpoint(endpoint):
         raise ValueError(f"Invalid endpoint: {endpoint}")
 
 
-def query_prs():
+def query_prs(last_timestamp):
     api_endpoint = _get_api_endpoint("pulls")
     headers = _load_token("token.txt")
     prs = []
@@ -58,13 +59,17 @@ def query_prs():
         if not pull_requests:
             break
 
-        prs.extend(pull_requests)
+        for pr in pull_requests:
+            pr_timestamp = datetime.strptime(pr["created_at"], "%Y-%m-%dT%H:%M:%SZ")
+            if pr_timestamp > last_timestamp:
+                prs.append(pr)
+
         page_number += 1
 
     return prs
 
 
-def query_issues():
+def query_issues(last_timestamp):
     api_endpoint = _get_api_endpoint("issues")
     headers = _load_token("token.txt")
     issues = []
@@ -77,7 +82,11 @@ def query_issues():
         if not issue_data:
             break
 
-        issues.extend(issue_data)
+        for issue in issue_data:
+            issue_timestamp = datetime.strptime(issue["created_at"], "%Y-%m-%dT%H:%M:%SZ")
+            if issue_timestamp > last_timestamp:
+                issues.append(issue)
+
         page_number += 1
 
     return issues
